@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Links Úteis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+       .button-blue { background-color: #007bff; }
+.button-green { background-color: #28a745; }
+.button-orange { background-color: #fd7e14; }
+.button-purple { background-color: #6f42c1; }
+.button-yellow { background-color: #ffc107; }
+.button-red { background-color: #ff0000; }
+.button-red { background-color: #11c107; }
+.button-purple-dark { background-color: #8a2be2; }
+.button-orange-light { background-color: #ffa500; }
+.button-blue-royal { background-color: #1e90ff; }
+.button-pink { background-color: #ff1493; }
+        
+		#clear-cache-btn {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+        }
+        #rodape {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+		
+		
+		#Limpar_cache{
+		
+           position: fixed;
+            bottom: 20px;
+            right: 20px;;
+			}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Meus Links Úteis</h1>
+        <div id="links">
+            <!-- Links salvos localmente serão exibidos aqui -->
+        </div>
+        <hr>
+        <!-- Adicione novos links utilizando o formulário -->
+        <form id="form">
+            <input type="text" id="link" placeholder="Cole o link aqui" required>
+            <input type="text" id="linkName" placeholder="Nome do Link" required>
+            <select id="color">                
+				<option value="purple-dark">RoxoEscuro</option>
+				<option value="blue">Azul</option>
+                <option value="green">Verde</option>
+                <option value="orange">Laranja</option>
+                <option value="purple">Roxo</option>
+                <option value="yellow">Amarelo</option>
+				<option value="red">Vermelho</option>
+				<option value="orange-light">laranja escuro</option>
+				<option value="blue-royal">azul bebe</option>
+				<option value="pink">pink</option>
+				<option value="yellow-dark">Amarelo Escuro</option>
+</select>
+            <button type="submit">Adicionar Link</button>
+        </form>
+        <form id="delete-form">
+            <select id="delete-select">
+                <option value="-1">Selecione um link para excluir</option>
+            </select>
+            <button type="submit">Excluir</button>
+        </form>
+    </div>
+	<div>
+	<!-- Adicione este botão onde deseja que o usuário possa baixar os novos links -->
+<button id="downloadLinksButton">Baixar Links</button>
+	</div>
+	
+     <DIV id ='Limpar_cache'>
+    <!-- Botão Limpar Cache -->
+    <button id="clear-cache-btn" class="button button-purple">Limpar Cache</button>
+		</DIV>
+		
+		
+		<!--//--------------importar links
+		
+		<div>
+    <!-- Botão para selecionar arquivo de links -->
+    <input type="file" id="file-input" accept=".txt">
+    <button id="importLinksButton" class="button button-green">Importar Links</button>
+</div>
+		
+		
+    <!-- Div no rodapé -->
+    <div id="rodape">
+        &copy; 2024 - Helio Goes Junior - Todos os direitos reservados
+    </div>
+
+ <script>
+    
+	// Função para carregar os links salvos localmente
+window.onload = function () {
+    var savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+    var linksDiv = document.getElementById('links');
+    savedLinks.forEach(function (link) {
+        var button = createLinkButton(link.url, link.color, link.name);
+        linksDiv.appendChild(button);
+    });
+    updateDeleteSelectOptions();
+};
+
+// Função para baixar os links em um arquivo de texto
+function downloadLinks() {
+    var savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+    var jsonString = JSON.stringify(savedLinks);
+    var blob = new Blob([jsonString], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'meuArquivo.txt'; // Nome do arquivo de texto
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Adiciona um event listener para o botão de baixar links
+document.getElementById('downloadLinksButton').addEventListener('click', downloadLinks);
+
+// Função para criar um botão de link
+function createLinkButton(url, color, name) {
+    var button = document.createElement('a');
+    button.href = url;
+    button.className = 'button button-' + color;
+    button.target = '_blank';
+    button.textContent = name;
+    return button;
+}
+
+document.getElementById('form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var link = document.getElementById('link').value;
+    var color = document.getElementById('color').value;
+    var name = document.getElementById('linkName').value;
+    var linksDiv = document.getElementById('links');
+
+    // Cria um botão de link
+    var button = createLinkButton(link, color, name);
+    linksDiv.appendChild(button);
+    document.getElementById('link').value = '';
+    document.getElementById('linkName').value = '';
+
+    // Salva o link localmente
+    var savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+    savedLinks.push({ url: link, color: color, name: name });
+    localStorage.setItem('myLinks', JSON.stringify(savedLinks));
+    updateDeleteSelectOptions();
+});
+
+document.getElementById('delete-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var deleteIndex = document.getElementById('delete-select').value;
+    if (deleteIndex !== "-1") {
+        var linksDiv = document.getElementById('links');
+        var savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+        var deletedLink = savedLinks.splice(deleteIndex, 1)[0];
+        localStorage.setItem('myLinks', JSON.stringify(savedLinks));
+        linksDiv.removeChild(linksDiv.children[deleteIndex]);
+        updateDeleteSelectOptions();
+    }
+});
+
+// Função para atualizar as opções do menu de exclusão
+function updateDeleteSelectOptions() {
+    var deleteSelect = document.getElementById('delete-select');
+    deleteSelect.innerHTML = '<option value="-1">Selecione um link para excluir</option>';
+    var savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+    savedLinks.forEach(function (link, index) {
+        var option = document.createElement('option');
+        option.value = index;
+        option.text = link.name;
+        deleteSelect.appendChild(option);
+    });
+}
+
+// Limpar cache
+document.getElementById('clear-cache-btn').addEventListener('click', function () {
+    var senha = prompt("Por favor, insira a senha para limpar o cache, isso irá apagar todos os links:");
+    if (senha === '123') {
+        localStorage.removeItem('myLinks');
+        alert('Cache limpo com sucesso!');
+        location.reload(); // Recarrega a página para atualizar os links
+    } else {
+        alert('Senha incorreta. Ação cancelada.');
+    }
+});
+
+// Função para importar os links de um arquivo de texto
+function importLinksFromFile(file) {
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        var fileContent = event.target.result;
+        var linksArray = fileContent.split('\n'); // Separar o conteúdo do arquivo em linhas
+
+        // Processar cada linha para extrair os links
+        var links = [];
+        linksArray.forEach(function (line) {
+            // Remover espaços em branco do início e do fim da linha
+            line = line.trim();
+            if (line !== "") { // Ignorar linhas em branco
+                // Adicionar a linha como um link
+                links.push({
+                    url: line, // Assume-se que a linha contém apenas o URL
+                    name: "Link Importado", // Nome padrão para links importados
+                    color: "blue" // Cor padrão para links importados
+                });
+            }
+        });
+
+        // Adiciona os links ao localStorage
+        localStorage.setItem('myLinks', JSON.stringify(links));
+
+        // Atualiza a interface para exibir os links importados
+        updateLinksUI(links);
+    };
+
+    reader.readAsText(file);
+}
+
+// Adicionar um event listener para o botão de importar links
+document.getElementById('importLinksButton').addEventListener('click', function () {
+    var fileInput = document.getElementById('file-input');
+    var file = fileInput.files[0];
+
+    // Verificar se um arquivo foi selecionado
+    if (file) {
+        // Chamar a função para importar os links do arquivo
+        importLinksFromFile(file);
+    } else {
+        alert('Por favor, selecione um arquivo de texto (.txt) para importar os links.');
+    }
+});
+
+// Função para atualizar a interface com os novos links importados
+function updateLinksUI(links) {
+    var linksDiv = document.getElementById('links');
+    linksDiv.innerHTML = ''; // Limpar o conteúdo atual
+
+    links.forEach(function (link) {
+        var button = createLinkButton(link.url, link.color, link.name);
+        linksDiv.appendChild(button);
+    });
+}
+
+</script>   
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>
